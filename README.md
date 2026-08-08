@@ -1,14 +1,45 @@
-# 中文 Humanizer
+# Humanizer 中文版：中文 AI 写作去痕与自然改写 Skill
 
 [![Validate package](https://github.com/holygeek00/humanizer-zh-cn/actions/workflows/validate.yml/badge.svg)](https://github.com/holygeek00/humanizer-zh-cn/actions/workflows/validate.yml)
 [![Sync upstream](https://github.com/holygeek00/humanizer-zh-cn/actions/workflows/sync-upstream.yml/badge.svg)](https://github.com/holygeek00/humanizer-zh-cn/actions/workflows/sync-upstream.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Agent Skill](https://img.shields.io/badge/Agent_Skill-Codex%20%7C%20Claude_Code-blue)](#支持的-agent)
 
-一个面向中文语境的写作去 AI 味 Agent Skill。它不靠禁词表机械替换，而是检查黑话有没有吞掉“谁做了什么、作用于谁、结果如何、证据在哪”，在不增加事实的前提下把信息放回句子。
+把 ChatGPT、GPT 等模型生成的中文初稿改得自然、具体，清理“赋能、打造、闭环、未来可期”等 AI 味、黑话和套话，同时保留事实、原意与作者声线。
 
-本项目 fork 并改编自 [blader/humanizer](https://github.com/blader/humanizer)。原项目由 Siqi Chen（GitHub 用户 [blader](https://github.com/blader)）发布，采用 MIT 许可证。本地化版本不是原作者的官方中文版。
+`humanizer-zh` 是一个简体中文 Agent Skill，适合 Codex、Claude Code 和其他支持 Markdown Skills 的 Agent。它不靠禁词表机械替换，而是检查黑话有没有吞掉“谁做了什么、作用于谁、结果如何、证据在哪”，再从原文中把信息放回句子。
 
-## 适用场景
+> Chinese-first AI writing humanizer skill for Codex and Claude Code. Removes formulaic AI tone and business jargon without changing facts.
+
+[看改写效果](#改写效果) · [30 秒安装](#30-秒安装) · [支持的 Agent](#支持的-agent) · [33 类模式](#33-类中文-ai-写作模式) · [常见问题](#常见问题)
+
+## 改写效果
+
+**改写前**
+
+> 本次功能升级以用户体验为核心抓手，通过上线订单页自助退款入口，进一步赋能售后服务提质增效。上线后，每天需要人工处理的退款工单从 120 件降到 45 件，充分彰显了团队持续创新的卓越能力。
+
+**改写后**
+
+> 订单页上线自助退款入口后，每天需要人工处理的退款工单从 120 件降到 45 件。
+
+改写保留了入口位置、工单类型和数字，只删掉没有增加信息的姿态层。原文没有具体信息时，技能不会为了“更像真人”编造数字、流程、案例或来源。
+
+## 30 秒安装
+
+```bash
+npx skills add holygeek00/humanizer-zh-cn --global
+```
+
+安装后新开会话或重新加载 Skills，然后直接说：
+
+```text
+用 $humanizer-zh 去掉下面这段中文的 AI 味，保留事实、原意和语气：
+
+[粘贴文本]
+```
+
+## 它解决什么
 
 - 文案、文章、报告、邮件和社交媒体内容去 AI 味
 - 清理“赋能、打造、深度、全方位、未来可期”等套话，找回被抽象词遮住的动作和责任主体
@@ -16,15 +47,31 @@
 - 按用户样稿校准声线，保留方言、网络用语和个人表达习惯
 - 审校时保护事实、数字、引用、代码和真正的不确定性
 
-## 安装
+## 为什么不是同义词替换器
+
+“AI 赋能业务增长”不能只改成“AI 助力业务增长”。两句话都没有信息。技能会检查：
+
+1. 谁在使用 AI？
+2. AI 具体做了什么？
+3. 作用于哪个流程或对象？
+4. 结果是什么？
+5. 有什么数据或事实支持？
+
+原文有答案，就把动作和结果写出来；没有答案，就删除无依据的效果，或在审校意见中指出缺失。详见 [SKILL.md](SKILL.md#先找回被黑话吃掉的信息)。
+
+## 支持的 Agent
+
+| Agent / 工具 | 安装方式 | 验证状态 |
+|---|---|---|
+| Codex | Skills CLI | 已验证 |
+| Claude Code | 插件或手动安装 | 已验证插件清单 |
+| 其他支持 Markdown Skills 的 Agent | Skills CLI 或复制 `SKILL.md` | 取决于宿主实现 |
+
+运行时核心只有一份 Markdown 文件，不依赖模型 API 或外部服务。
+
+## 其他安装方式
 
 ### Skills CLI
-
-全局安装：
-
-```bash
-npx skills add holygeek00/humanizer-zh-cn --global
-```
 
 安装到所有受支持的 Agent：
 
@@ -55,7 +102,7 @@ git clone https://github.com/holygeek00/humanizer-zh-cn.git /path/to/skills/huma
 
 安装后请新开会话或重新加载技能。
 
-## 使用
+## 使用方法
 
 直接粘贴文本：
 
@@ -77,7 +124,7 @@ git clone https://github.com/holygeek00/humanizer-zh-cn.git /path/to/skills/huma
 
 也可以指定文件。技能会保留代码块、frontmatter、数据和链接目标，只改自然语言正文。
 
-## 33 类中文模式
+## 33 类中文 AI 写作模式
 
 | # | 模式 | 典型表现 |
 |---|---|---|
@@ -119,7 +166,7 @@ git clone https://github.com/holygeek00/humanizer-zh-cn.git /path/to/skills/huma
 
 ## 与上游相比做了什么
 
-这不是逐句翻译。主要改动包括：
+本项目 fork 并改编自 Siqi Chen（GitHub 用户 [blader](https://github.com/blader)）的 [blader/humanizer](https://github.com/blader/humanizer)，不是原作者维护的官方中文版，也不是逐句翻译。主要改动包括：
 
 - 保留上游 33 类框架、声线校准、事实不增补和“初稿 → 审校 → 终稿”流程。
 - 将英语特有触发词和例句替换为中文互联网、职场、公文、营销、自媒体常见表达。
@@ -130,6 +177,28 @@ git clone https://github.com/holygeek00/humanizer-zh-cn.git /path/to/skills/huma
 - 使用独立技能名 `humanizer-zh`，避免与原版安装冲突。
 
 详细映射和维护约定见 [LOCALIZATION.md](LOCALIZATION.md)。
+
+## 常见问题
+
+### 这是中文 AI 检测器吗？
+
+不是。它是中文文本改写和审校 Skill，用来处理可观察的写作问题，不判断一段文字究竟由人还是 AI 创作。
+
+### 能降低 AI 检测率或 AIGC 检测率吗？
+
+不承诺。不同检测器的结果不稳定，本项目也不以规避学校、期刊或公司的 AI 使用规定为目标。它解决的是套话、黑话、机械结构和事实漂移。
+
+### 可以处理论文、报告和技术文档吗？
+
+可以审校表达，但会保留术语、数字、引文、代码和真正的不确定性。它不会编造实验结果、参考文献或数据，也不能替代领域审稿。
+
+### ChatGPT、Codex 和 Claude Code 都能用吗？
+
+仓库已验证 Codex 的 Skills CLI 发现和 Claude Code 插件清单。`SKILL.md` 是纯 Markdown，也可以作为指令交给其他支持 Skills 或自定义提示词的 Agent；具体加载方式取决于宿主。
+
+### 支持繁体中文吗？
+
+当前规则和例句主要面向简体中文。繁体文本可以尝试使用，但尚未针对台湾、香港等地区的词汇和语感做系统验证。
 
 ## 上游同步
 
@@ -156,3 +225,7 @@ git clone https://github.com/holygeek00/humanizer-zh-cn.git /path/to/skills/huma
 
 - 原项目：https://github.com/blader/humanizer
 - 本地化维护：https://github.com/holygeek00/humanizer-zh-cn
+
+## 反馈与贡献
+
+发现误伤、漏判或新的中文 AI 写作套路，可以[提交 issue](https://github.com/holygeek00/humanizer-zh-cn/issues)。如果这个 Skill 对你有用，欢迎给仓库一个 Star，方便以后找到，也能帮助更多中文写作者发现它。
