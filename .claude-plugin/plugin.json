@@ -1,14 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
-  "name": "humanizer",
-  "description": "Remove signs of AI-generated writing from text, making it sound more natural and human. Based on Wikipedia's \"Signs of AI writing\" guide.",
-  "version": "2.9.1",
+  "name": "humanizer-zh",
+  "description": "去除中文文本中的 AI 写作痕迹，保留事实、原意和作者声线。基于 blader/humanizer 本地化。",
+  "version": "2.9.1-zh.1",
   "author": {
-    "name": "blader",
+    "name": "Siqi Chen (blader); Chinese localization by holygeek00",
     "url": "https://github.com/blader"
   },
-  "homepage": "https://github.com/blader/humanizer",
-  "repository": "https://github.com/blader/humanizer",
+  "homepage": "https://github.com/holygeek00/humanizer-zh-cn",
+  "repository": "https://github.com/holygeek00/humanizer-zh-cn",
   "license": "MIT",
-  "keywords": ["writing", "editing", "ai-detection", "humanize", "prose", "style"]
+  "keywords": ["writing", "editing", "ai-detection", "humanize", "chinese", "中文", "去AI味"]
 }

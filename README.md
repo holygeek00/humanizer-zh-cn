@@ -1,230 +1,155 @@
-# Humanizer
+# 中文 Humanizer
 
-[![skills.sh installs](https://skills.sh/b/blader/humanizer)](https://skills.sh/blader/humanizer)
+[![Validate package](https://github.com/holygeek00/humanizer-zh-cn/actions/workflows/validate.yml/badge.svg)](https://github.com/holygeek00/humanizer-zh-cn/actions/workflows/validate.yml)
+[![Sync upstream](https://github.com/holygeek00/humanizer-zh-cn/actions/workflows/sync-upstream.yml/badge.svg)](https://github.com/holygeek00/humanizer-zh-cn/actions/workflows/sync-upstream.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A portable agent skill that removes signs of AI-generated writing from text, making it sound more natural and human. It is plain Markdown, so it can run in any harness that supports skill-style instructions.
+一个面向中文语境的写作去 AI 味 Agent Skill。它会识别中文里常见的机器写作套路，在不增加事实、不改变原意的前提下，把文本改得自然、具体，并尽量保留作者本人的声音。
 
-## Installation
+本项目 fork 并改编自 [blader/humanizer](https://github.com/blader/humanizer)。原项目由 Siqi Chen（GitHub 用户 [blader](https://github.com/blader)）发布，采用 MIT 许可证。本地化版本不是原作者的官方中文版。
+
+## 适用场景
+
+- 文案、文章、报告、邮件和社交媒体内容去 AI 味
+- 清理“赋能、打造、深度、全方位、未来可期”等套话
+- 减少机械排比、强凑三点、标题口号化和聊天机器人残留
+- 按用户样稿校准声线，保留方言、网络用语和个人表达习惯
+- 审校时保护事实、数字、引用、代码和真正的不确定性
+
+## 安装
 
 ### Skills CLI
 
-Install globally with the cross-agent skills CLI so Humanizer is available in every project:
+全局安装：
 
 ```bash
-npx skills add blader/humanizer --global
+npx skills add holygeek00/humanizer-zh-cn --global
 ```
 
-Update an existing install:
+安装到所有受支持的 Agent：
 
 ```bash
-npx skills update humanizer --global
+npx skills add holygeek00/humanizer-zh-cn --global --agent '*'
 ```
 
-To install globally into every supported agent harness:
+更新已安装版本：
 
 ```bash
-npx skills add blader/humanizer --global --agent '*'
+npx skills update humanizer-zh --global
 ```
 
-To target one configured harness, pass its agent name:
+### Claude Code 插件
+
+```text
+/plugin marketplace add holygeek00/humanizer-zh-cn
+/plugin install humanizer-zh@humanizer-zh-cn
+```
+
+### 手动安装
+
+`SKILL.md` 是运行时文件。把仓库克隆到你的技能目录，或只复制 `SKILL.md`：
 
 ```bash
-npx skills add blader/humanizer --global --agent <agent-name>
+git clone https://github.com/holygeek00/humanizer-zh-cn.git /path/to/skills/humanizer-zh
 ```
 
-Omit `--global` for a project-local install that can be committed and shared with collaborators. Start a new agent session or reload skills after installation.
+安装后请新开会话或重新加载技能。
 
-### Claude Code plugin
+## 使用
 
-Claude Code users can also install Humanizer as a plugin:
+直接粘贴文本：
 
-```
-/plugin marketplace add blader/humanizer
-/plugin install humanizer@humanizer
-```
+```text
+用 $humanizer-zh 去掉下面这段话的 AI 味，保留事实和原意：
 
-The skill is then invoked as `/humanizer:humanizer`.
-
-### Manual
-
-Any agent harness can use the skill directly because the runtime artifact is `SKILL.md`. Install it wherever your harness expects skill directories, or copy `SKILL.md` into an existing skill folder.
-
-For example:
-
-```bash
-git clone https://github.com/blader/humanizer.git /path/to/your/skills/humanizer
+[粘贴文本]
 ```
 
-Or, if you already have this repo cloned:
+提供自己的样稿来校准声线：
 
-```bash
-mkdir -p /path/to/your/skills/humanizer
-cp SKILL.md /path/to/your/skills/humanizer/
+```text
+用 $humanizer-zh 改写。先参考下面两段我以前写的文字，保留我的句长、语气和用词习惯：
+
+[本人样稿]
+
+[待改文本]
 ```
 
-## Usage
+也可以指定文件。技能会保留代码块、frontmatter、数据和链接目标，只改自然语言正文。
 
-Invoke the skill however your agent harness exposes installed skills. Common forms include a slash command or a direct request:
+## 33 类中文模式
 
-```
-/humanizer
+| # | 模式 | 典型表现 |
+|---|---|---|
+| 1 | 空泛拔高意义 | “开启新篇章”“具有里程碑意义” |
+| 2 | 用名气代替信息 | “多家权威媒体广泛关注” |
+| 3 | 句尾伪分析 | “从而提升……进一步赋能……” |
+| 4 | 宣传广告腔 | “匠心打造”“震撼来袭” |
+| 5 | 模糊归因 | “有专家表示”“研究表明”却无来源 |
+| 6 | 挑战与展望模板 | “尽管面临挑战，未来仍可期” |
+| 7 | AI 高频词堆叠 | 赋能、聚焦、生态、闭环、抓手 |
+| 8 | 回避简单判断句 | “定位于”“作为……载体” |
+| 9 | 先否后肯滥用 | “不仅是……更是……” |
+| 10 | 强凑三点和排比 | 无论内容都分成三项 |
+| 11 | 同义词轮换 | 同一对象不断换称呼 |
+| 12 | 虚假范围 | “从一杯咖啡到一座城市” |
+| 13 | 主体消失 | “已完成”“得到有效提升” |
+| 14 | 破折号和括号过密 | 用标点制造戏剧停顿 |
+| 15 | 重点标记过多 | 每段机械加粗关键词 |
+| 16 | 小标题式清单 | “体验：……性能：……安全：……” |
+| 17 | 标题对仗口号化 | “洞察趋势：解码未来” |
+| 18 | 表情装饰结构 | 用 🚀💡✅ 代替层级 |
+| 19 | 标点混用 | 全角半角混杂、概念滥加引号 |
+| 20 | 聊天机器人残留 | “当然可以”“希望对你有帮助” |
+| 21 | 免责声明和猜测补洞 | “公开资料有限，因此她可能……” |
+| 22 | 讨好和附和 | “你说得太对了” |
+| 23 | 冗余套话 | “值得注意的是”“在此基础之上” |
+| 24 | 过度限定 | “在某种程度上可能会产生一定影响” |
+| 25 | 万能正能量结尾 | “让我们拭目以待”“再创辉煌” |
+| 26 | 四字词连用 | “凝心聚力、锐意进取、攻坚克难” |
+| 27 | 本质论和权威口吻 | “底层逻辑是”“归根结底” |
+| 28 | 预告式开场 | “接下来从三个维度深入探讨” |
+| 29 | 标题后重复标题 | 标题下一句只复述标题 |
+| 30 | 以修改过程为中心 | 非更新日志反复说新增、优化、调整 |
+| 31 | 人造金句和短句连击 | “时代变了。规则变了。” |
+| 32 | 空洞比喻 | “数据是灯塔，信任是底色” |
+| 33 | 假坦诚反问 | “说实话？答案可能出乎意料” |
 
-[paste your text here]
-```
+完整说明、误伤保护和改写流程见 [SKILL.md](SKILL.md)。
 
-```
-Please humanize this text: [your text]
-```
+## 与上游相比做了什么
 
-Point it at a file and the skill rewrites it in place:
+这不是逐句翻译。主要改动包括：
 
-```
-Humanize the prose in docs/launch-post.md
-```
+- 保留上游 33 类框架、声线校准、事实不增补和“初稿 → 审校 → 终稿”流程。
+- 将英语特有触发词和例句替换为中文互联网、职场、公文、营销、自媒体常见表达。
+- 把英语的 copula、Title Case、连字符等规则改写为中文等价问题，如“定位于”、口号式标题、四字词堆叠和全半角标点混用。
+- 增加中文误伤保护，不因一个破折号、正式词汇、列表或正确语法就判定为 AI。
+- 使用独立技能名 `humanizer-zh`，避免与原版安装冲突。
 
-### Voice Calibration
+详细映射和维护约定见 [LOCALIZATION.md](LOCALIZATION.md)。
 
-To match your personal writing style, provide a sample of your own writing:
+## 上游同步
 
-```
-/humanizer
+`.github/workflows/sync-upstream.yml` 每周运行一次，也支持手动触发：
 
-Here's a sample of my writing for voice matching:
-[paste 2-3 paragraphs of your own writing]
+1. 拉取 `blader/humanizer` 的 `main` 分支。
+2. 如果上游没有新提交，直接结束。
+3. 尝试把上游提交合并到本仓库；只有无冲突且本地校验全部通过时，才自动推送到 `main`。
+4. 如果发生冲突或校验失败，回滚临时合并并创建带上游提交号、冲突文件和比较链接的 GitHub issue，交由维护者审查。
+5. 同一上游提交只创建一个 issue，避免定时任务重复刷屏。
 
-Now humanize this text:
-[paste AI text to humanize]
-```
+这种策略不会用机器翻译覆盖中文规则，也不会在冲突时强推。详见 [LOCALIZATION.md](LOCALIZATION.md)。
 
-The skill will analyze your sentence rhythm, word choices, and quirks, then apply them to the rewrite instead of producing generic "clean" output.
+## 版本记录
 
-## Overview
+- **2.9.1-zh.1**：基于上游 2.9.1 完成首个简体中文本地化版本；重写 33 类规则与例句；加入中文 README、来源与许可证说明、包校验和每周安全同步。
 
-Based on [Wikipedia's "Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) guide, maintained by WikiProject AI Cleanup. This comprehensive guide comes from observations of thousands of instances of AI-generated text.
+上游英文版历史见 [blader/humanizer README](https://github.com/blader/humanizer#version-history)。
 
-The skill also includes a final "obviously AI generated" audit pass and a second rewrite, to catch lingering AI-isms in the first draft.
+## 许可证与署名
 
-Rewrites follow a no-fabrication rule: they never add facts, names, dates, or citations that aren't in the source text. Specificity has to come from the source or the author, not from the rewrite.
+本项目遵循 [MIT License](LICENSE)。原始版权声明 `Copyright (c) 2025 Siqi Chen` 保持不变。任何复制或重要部分的再分发都应附带该版权与许可声明。
 
-### Key Insight from Wikipedia
-
-> "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
-
-## 33 Patterns Detected (with Before/After Examples)
-
-### Content Patterns
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 1 | **Significance inflation** | "marking a pivotal moment in the evolution of..." | "was established in 1989 as part of a wider decentralization" |
-| 2 | **Notability name-dropping** | "cited in NYT, BBC, FT, and The Hindu" | Trim the list; keep only sourced context |
-| 3 | **Superficial -ing analyses** | "symbolizing... reflecting... showcasing..." | Remove, or keep only what the source supports |
-| 4 | **Promotional language** | "nestled within the breathtaking region" | "is a town in the Gonder region" |
-| 5 | **Vague attributions** | "Experts believe it plays a crucial role" | Name a real source or cut the claim |
-| 6 | **Formulaic challenges** | "Despite challenges... continues to thrive" | Keep the sourced facts; cut the boosterism |
-
-### Language Patterns
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 7 | **AI vocabulary** | "Actually... additionally... testament... landscape... showcasing" | "also... remain common" |
-| 8 | **Copula avoidance** | "serves as... features... boasts" | "is... has" |
-| 9 | **Negative parallelisms / tailing negations** | "It's not just X, it's Y", "..., no guessing" | State the point directly |
-| 10 | **Rule of three** | "innovation, inspiration, and insights" | Use natural number of items |
-| 11 | **Synonym cycling** | "protagonist... main character... central figure... hero" | "protagonist" (repeat when clearest) |
-| 12 | **False ranges** | "from the Big Bang to dark matter" | List topics directly |
-| 13 | **Passive voice / subjectless fragments** | "No configuration file needed" | Name the actor when it helps clarity |
-
-### Style Patterns
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 14 | **Em/en dashes** | "institutions—not the people—yet this continues—" | Cut them: periods, commas, colons, or parentheses |
-| 15 | **Boldface overuse** | "**OKRs**, **KPIs**, **BMC**" | "OKRs, KPIs, BMC" |
-| 16 | **Inline-header lists** | "**Performance:** Performance improved" | Convert to prose |
-| 17 | **Title Case Headings** | "Strategic Negotiations And Partnerships" | "Strategic negotiations and partnerships" |
-| 18 | **Emojis** | "🚀 Launch Phase: 💡 Key Insight:" | Remove emojis |
-| 19 | **Curly quotes** | `said “the project”` | `said "the project"` |
-| 26 | **Hyphenated word pairs** | “cross-functional, data-driven, client-facing” | Drop hyphens on common word pairs |
-| 27 | **Persuasive authority tropes** | "At its core, what matters is..." | State the point directly |
-| 28 | **Signposting announcements** | "Let's dive in", "Here's what you need to know" | Start with the content |
-| 29 | **Fragmented headers** | "## Performance" + "Speed matters." | Let the heading do the work |
-| 30 | **Diff-anchored writing** | "This function was added to replace..." | Describe what it does, not what changed |
-| 31 | **Manufactured punchlines / staccato drama** | "It had no preference. No prior. No nostalgia." | Use varied sentence lengths and concrete claims |
-| 32 | **Aphorism formulas** | "Symmetry is the language of trust" | Replace the formula with the actual claim |
-| 33 | **Conversational rhetorical openers** | "Honestly? It depends..." | Remove the fake-candid setup |
-
-### Communication Patterns
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 20 | **Chatbot artifacts** | "I hope this helps! Let me know if..." | Remove entirely |
-| 21 | **Cutoff disclaimers** | "While details are limited in available sources..." | Find sources or remove |
-| 22 | **Sycophantic tone** | "Great question! You're absolutely right!" | Respond directly |
-
-### Filler and Hedging
-
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 23 | **Filler phrases** | "In order to", "Due to the fact that" | "To", "Because" |
-| 24 | **Excessive hedging** | "could potentially possibly" | "may" |
-| 25 | **Generic conclusions** | "The future looks bright" | Specific plans or facts |
-
-## Full Example
-
-*(Illustration note: the rewrite below adds specifics, like the month and the neighborhoods, that stand in for details the author would supply. In a real session those come from the user; the skill asks rather than invents.)*
-
-**Before (AI-sounding):**
-> I recently spent five unforgettable days in Lisbon, and let me tell you — this city completely stole my heart. From the moment I arrived, I knew I was somewhere truly special.
->
-> Nestled along the banks of the Tagus River, Lisbon stands as a vibrant testament to Portugal's enduring spirit, where rich history and modern energy intertwine at every turn. Yes, the famous hills are challenging — my legs certainly felt it! — but every climb rewards you with breathtaking, panoramic views that make it all worthwhile.
->
-> No trip would be complete without riding the iconic Tram 28, winding through the city's most historic neighborhoods. And the food? Simply divine. The original pastéis de nata at Pastéis de Belém are a beloved national treasure, and savoring one still warm was a moment I will never forget.
->
-> But what truly makes Lisbon special isn't just the sights — it's the feeling. Wander a few steps off the main squares and you'll discover a quieter, more authentic side: sun-drenched alleys, charming tiled facades, and friendly locals going about their daily lives, inviting you to slow down and savor every moment.
->
-> Of course, the must-see São Jorge Castle offers stunning views over the rooftops below. The queues can be long, but the experience is absolutely worth it for any history buff or curious traveler.
->
-> Would I go back? Absolutely. Lisbon isn't just a place to visit — it's a place to fall in love with, again and again. If you're dreaming of your next getaway, this is one destination that promises memories to last a lifetime. ✨
-
-**After (Humanized):**
-> I spent five days in Lisbon last October and still have mixed feelings about it. Beautiful, yes. Also harder on the knees than anyone warned me.
->
-> The hills are the whole story and somehow never make the brochures. My hotel was up in Alfama, which photographs beautifully and translates, in practice, to climbing what felt like a six-story staircase every time I wanted coffee. By the second day my calves had opinions. I started planning each walk around which way was downhill, which is a strange way to see a city but probably an honest one.
->
-> Everyone says to ride Tram 28, so I did, wedged against a stranger's backpack for forty minutes while three tour groups filmed the same corner. I would walk the route next time, or go before breakfast. The custard tarts, though, earn the fuss. I had one at a plain little place in Graça, still warm, and for about thirty seconds I understood why people build trips around pastry.
->
-> What I did not expect was how quiet the city gets away from the main squares. Two blocks uphill from any plaza it turns into laundry lines, chipped tile, open windows, and old men watching football with the sound turned up. That is the Lisbon I keep thinking about, not the castle.
->
-> The castle is fine. The view is great, the queue is long, and I spent more time shuffling toward the entrance than looking at anything once I got inside. If I had only two days, I would trade it for an afternoon of getting lost.
->
-> I would go back, but in spring and with better shoes. Lisbon does not bend over backward to make things easy for you. I think I liked that, even when my legs disagreed.
-
-## References
-
-- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) - Primary source
-- [WikiProject AI Cleanup](https://en.wikipedia.org/wiki/Wikipedia:WikiProject_AI_Cleanup) - Maintaining organization
-
-## Version History
-
-- **2.9.1** - Improved distribution and portability: removed nonportable frontmatter and tool preapprovals, made global installation the documented default, added package validation, and removed the duplicated long-form example from the runtime prompt. No change to the 33 patterns.
-- **2.9.0** - Added a no-fabrication rule: rewrites may not invent facts, names, dates, or citations not present in the source, and every example that modeled invented specifics was re-cut to use only source information (fixes #187). Replaced paragraph-count parity with an information-over-shape rule, made a user's voice sample outrank the em dash ban, and added invocation modes (pasted text / file / embedded). No change to the 33 patterns.
-- **2.8.3** - Moved the skill version from the unsupported top-level frontmatter key to `metadata.version` for Agent Skills and Claude compatibility. No change to the 33 patterns.
-- **2.8.2** - Replaced the full before/after example with a first-person Lisbon trip recap. The after now keeps the same topic, perspective, and rough length as the before while removing the AI tells without becoming clipped or slogan-like. No change to the 33 patterns.
-- **2.8.1** - Added cross-agent installation docs, optional Claude Code plugin packaging, and a compact secondhand-text false-positive guard. No change to the 33 patterns.
-- **2.8.0** - Added style/cadence patterns #31-33 for manufactured punchlines, aphorism formulas, and conversational rhetorical openers; expanded #20 to catch offer-to-continue chatbot closers. 33 patterns total.
-- **2.7.0** - Added pattern #30 (diff-anchored writing); made em/en dashes a hard cut rather than "overuse"; expanded #21 to cover speculative gap-filling ("maintains a low profile"). 30 patterns total.
-- **2.6.0** - Cleanup pass: consolidated the duplicated workflow sections, gated the personality guidance to content where voice is wanted, removed the model-fingerprinting subsection, and condensed the worked example. No change to the 29 patterns.
-- **2.5.1** - Added a passive-voice / subjectless-fragment rule, raising the total to 29 patterns
-- **2.5.0** - Added patterns for persuasive framing, signposting, and fragmented headers; expanded negative parallelisms to cover tailing negations; tightened wording around em dash overuse; fixed frontmatter wording to use "filler phrases"
-- **2.4.0** - Added voice calibration: match the user's personal writing style from samples
-- **2.3.0** - Added pattern #25: hyphenated word pair overuse
-- **2.2.0** - Added a final "obviously AI generated" audit + second-pass rewrite prompts
-- **2.1.1** - Fixed pattern #18 example (curly quotes vs straight quotes)
-- **2.1.0** - Added before/after examples for all 24 patterns
-- **2.0.0** - Complete rewrite based on raw Wikipedia article content
-- **1.0.0** - Initial release
-
-## License
-
-MIT
+- 原项目：https://github.com/blader/humanizer
+- 本地化维护：https://github.com/holygeek00/humanizer-zh-cn

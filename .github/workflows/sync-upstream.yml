@@ -1,0 +1,131 @@
+name: Sync upstream safely
+
+on:
+  schedule:
+    - cron: "17 1 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch upstream
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add upstream https://github.com/blader/humanizer.git
+          git fetch upstream main
+
+      - name: Check for new upstream commits
+        id: upstream
+        run: |
+          if git merge-base --is-ancestor upstream/main HEAD; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "sha=$(git rev-parse upstream/main)" >> "$GITHUB_OUTPUT"
+            echo "short_sha=$(git rev-parse --short upstream/main)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Attempt a conflict-free merge
+        if: steps.upstream.outputs.changed == 'true'
+        id: merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_SHA: ${{ steps.upstream.outputs.sha }}
+          UPSTREAM_SHORT_SHA: ${{ steps.upstream.outputs.short_sha }}
+        run: |
+          set +e
+          git merge --no-commit --no-ff upstream/main
+          merge_status=$?
+          set -e
+
+          if [ "$merge_status" -eq 0 ]; then
+            echo "safe=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          conflicts=$(git diff --name-only --diff-filter=U | sed 's/^/- `/' | sed 's/$/`/')
+          git merge --abort
+          title="[upstream-sync] Review upstream ${UPSTREAM_SHORT_SHA}"
+          if gh issue list --state open --search "$title in:title" --json title --jq '.[].title' | grep -Fxq "$title"; then
+            exit 0
+          fi
+
+          cat > sync-issue.md <<EOF
+          The scheduled upstream sync could not merge safely.
+
+          - Upstream commit: [\`${UPSTREAM_SHA}\`](https://github.com/blader/humanizer/commit/${UPSTREAM_SHA})
+          - Compare: https://github.com/holygeek00/humanizer-zh-cn/compare/main...blader:humanizer:main
+          - Reason: merge conflicts
+
+          Conflicting files:
+
+          ${conflicts}
+
+          Review the upstream intent and reproduce it in Chinese. Do not overwrite localized rules with a machine translation.
+          EOF
+          gh issue create --title "$title" --body-file sync-issue.md
+          echo "safe=false" >> "$GITHUB_OUTPUT"
+
+      - name: Validate merged package
+        if: steps.merge.outputs.safe == 'true'
+        id: validate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPSTREAM_SHA: ${{ steps.upstream.outputs.sha }}
+          UPSTREAM_SHORT_SHA: ${{ steps.upstream.outputs.short_sha }}
+        run: |
+          set +e
+          python3 scripts/validate-package.py > validation.log 2>&1
+          validation_status=$?
+          set -e
+
+          if [ "$validation_status" -eq 0 ]; then
+            echo "passed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git merge --abort
+          title="[upstream-sync] Review upstream ${UPSTREAM_SHORT_SHA}"
+          if gh issue list --state open --search "$title in:title" --json title --jq '.[].title' | grep -Fxq "$title"; then
+            exit 0
+          fi
+
+          sed -n '1,120p' validation.log > validation-short.log
+          cat > sync-issue.md <<EOF
+          The scheduled upstream sync merged without Git conflicts, but package validation failed. Nothing was pushed.
+
+          - Upstream commit: [\`${UPSTREAM_SHA}\`](https://github.com/blader/humanizer/commit/${UPSTREAM_SHA})
+          - Compare: https://github.com/holygeek00/humanizer-zh-cn/compare/main...blader:humanizer:main
+
+          Validation output:
+
+          \`\`\`text
+          $(cat validation-short.log)
+          \`\`\`
+
+          Review the upstream change and update the Chinese package metadata and rules together.
+          EOF
+          gh issue create --title "$title" --body-file sync-issue.md
+          echo "passed=false" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push safe update
+        if: steps.validate.outputs.passed == 'true'
+        env:
+          UPSTREAM_SHORT_SHA: ${{ steps.upstream.outputs.short_sha }}
+        run: |
+          git commit -m "Sync upstream ${UPSTREAM_SHORT_SHA}"
+          git push origin HEAD:main

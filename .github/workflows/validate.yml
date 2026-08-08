@@ -1,4 +1,4 @@
-name: Validate package
+name: Validate Chinese package
 
 on:
   pull_request:

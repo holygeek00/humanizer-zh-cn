@@ -1,18 +1,18 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace-manifest.json",
-  "name": "humanizer",
+  "name": "humanizer-zh-cn",
   "owner": {
-    "name": "blader",
-    "url": "https://github.com/blader"
+    "name": "holygeek00",
+    "url": "https://github.com/holygeek00"
   },
-  "description": "The humanizer skill, installable as a Claude Code plugin.",
+  "description": "面向中文语境的 Humanizer skill，可作为 Claude Code 插件安装。",
   "plugins": [
     {
-      "name": "humanizer",
+      "name": "humanizer-zh",
       "source": "./",
-      "description": "Remove signs of AI-generated writing from text, making it sound more natural and human. Based on Wikipedia's \"Signs of AI writing\" guide.",
+      "description": "去除中文文本中的 AI 写作痕迹，保留事实、原意和作者声线。",
       "license": "MIT",
-      "keywords": ["writing", "editing", "ai-detection", "humanize", "prose", "style"]
+      "keywords": ["writing", "editing", "humanize", "chinese", "中文", "去AI味"]
     }
   ]
 }
