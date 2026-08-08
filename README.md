@@ -4,14 +4,14 @@
 [![Sync upstream](https://github.com/holygeek00/humanizer-zh-cn/actions/workflows/sync-upstream.yml/badge.svg)](https://github.com/holygeek00/humanizer-zh-cn/actions/workflows/sync-upstream.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-一个面向中文语境的写作去 AI 味 Agent Skill。它会识别中文里常见的机器写作套路，在不增加事实、不改变原意的前提下，把文本改得自然、具体，并尽量保留作者本人的声音。
+一个面向中文语境的写作去 AI 味 Agent Skill。它不靠禁词表机械替换，而是检查黑话有没有吞掉“谁做了什么、作用于谁、结果如何、证据在哪”，在不增加事实的前提下把信息放回句子。
 
 本项目 fork 并改编自 [blader/humanizer](https://github.com/blader/humanizer)。原项目由 Siqi Chen（GitHub 用户 [blader](https://github.com/blader)）发布，采用 MIT 许可证。本地化版本不是原作者的官方中文版。
 
 ## 适用场景
 
 - 文案、文章、报告、邮件和社交媒体内容去 AI 味
-- 清理“赋能、打造、深度、全方位、未来可期”等套话
+- 清理“赋能、打造、深度、全方位、未来可期”等套话，找回被抽象词遮住的动作和责任主体
 - 减少机械排比、强凑三点、标题口号化和聊天机器人残留
 - 按用户样稿校准声线，保留方言、网络用语和个人表达习惯
 - 审校时保护事实、数字、引用、代码和真正的不确定性
@@ -87,7 +87,7 @@ git clone https://github.com/holygeek00/humanizer-zh-cn.git /path/to/skills/huma
 | 4 | 宣传广告腔 | “匠心打造”“震撼来袭” |
 | 5 | 模糊归因 | “有专家表示”“研究表明”却无来源 |
 | 6 | 挑战与展望模板 | “尽管面临挑战，未来仍可期” |
-| 7 | AI 高频词堆叠 | 赋能、聚焦、生态、闭环、抓手 |
+| 7 | 抽象动词吞掉动作 | 赋能、聚焦、生态、闭环、抓手 |
 | 8 | 回避简单判断句 | “定位于”“作为……载体” |
 | 9 | 先否后肯滥用 | “不仅是……更是……” |
 | 10 | 强凑三点和排比 | 无论内容都分成三项 |
@@ -125,6 +125,8 @@ git clone https://github.com/holygeek00/humanizer-zh-cn.git /path/to/skills/huma
 - 将英语特有触发词和例句替换为中文互联网、职场、公文、营销、自媒体常见表达。
 - 把英语的 copula、Title Case、连字符等规则改写为中文等价问题，如“定位于”、口号式标题、四字词堆叠和全半角标点混用。
 - 增加中文误伤保护，不因一个破折号、正式词汇、列表或正确语法就判定为 AI。
+- 不把“赋能”之类的词当作简单禁词，而是检查主体、动作、对象、结果与证据；禁止用同义黑话替换黑话。
+- 修正会凭空补充日期、人数、流程或效果的示例；原文缺少细节时明确指出缺失，不伪造“具体感”。
 - 使用独立技能名 `humanizer-zh`，避免与原版安装冲突。
 
 详细映射和维护约定见 [LOCALIZATION.md](LOCALIZATION.md)。
@@ -143,6 +145,7 @@ git clone https://github.com/holygeek00/humanizer-zh-cn.git /path/to/skills/huma
 
 ## 版本记录
 
+- **2.9.1-zh.2**：加入“黑话吞掉信息”的诊断框架；按主体、动作、对象、结果和证据还原句子；禁止同义黑话替换；修复首版示例中为追求具体而新增原文事实的问题。
 - **2.9.1-zh.1**：基于上游 2.9.1 完成首个简体中文本地化版本；重写 33 类规则与例句；加入中文 README、来源与许可证说明、包校验和每周安全同步。
 
 上游英文版历史见 [blader/humanizer README](https://github.com/blader/humanizer#version-history)。

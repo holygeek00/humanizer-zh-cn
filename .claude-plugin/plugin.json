@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "humanizer-zh",
   "description": "去除中文文本中的 AI 写作痕迹，保留事实、原意和作者声线。基于 blader/humanizer 本地化。",
-  "version": "2.9.1-zh.1",
+  "version": "2.9.1-zh.2",
   "author": {
     "name": "Siqi Chen (blader); Chinese localization by holygeek00",
     "url": "https://github.com/blader"
